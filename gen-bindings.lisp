@@ -5,7 +5,7 @@
 
 (defun gen-bindings (lua-code)
   (let* [(bind-table ((load lua-code)))
-	 (bindings (keys bind-table))
+         (bindings (keys bind-table))
          (bind (lambda (name)
            (.. "(define-native " name ")")))]
     (sort bindings)
