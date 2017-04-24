@@ -1,3 +1,4 @@
 run
+gen
 test.lisp
-out*
+out.*
