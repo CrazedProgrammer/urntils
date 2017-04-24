@@ -1,9 +1,9 @@
 (import lua/basic (load))
 (import lua/table (sort))
-(import extra/io (read-all! write-lines!))
+(import extra/io (read-all! write-lines! write-all!))
 (import string (sub))
 
-(defun gen-bindings (lua-code)
+(defun gen-lisp-bindings (lua-code)
   (let* [(bind-table ((load lua-code)))
          (bindings (keys bind-table))
          (bind (lambda (name)
@@ -11,8 +11,33 @@
     (sort bindings)
     (map bind bindings)))
 
-(defun write-bindings! (infile outfile)
-  (write-lines! outfile (snoc (gen-bindings (read-all! infile)) "")))
+(defun write-lisp-bindings! (infile outfile)
+  (write-lines! outfile (snoc (gen-lisp-bindings (read-all! infile)) "")))
+
+(defun gen-lua-bindings (library-name)
+  (.. "local export = {}
+       local function convertName(name)
+           return name:gsub('%_', '-'):lower()
+       end
+       local function add(name, tab)
+           if name ~= '' then
+               export[convertName(name)] = tab
+           end
+           if type(tab) == 'table' then
+               for k, v in pairs(tab) do
+                   add(name..((#name > 0) and '/' or '')..k, v)
+               end
+           end
+       end
+       add('', require('"
+      library-name
+      "') or {})
+       return export"))
+
+(defun write-lua-bindings! (library-name outfile)
+  (write-all! outfile (gen-lua-bindings library-name)))
 
 (when (> (# arg) 0)
-  (write-bindings! (car arg) (.. (sub (car arg) 1 -5) ".lisp")))
+  (if (= (# arg) 2)
+    (write-lua-bindings! (car arg) (cadr arg))
+    (write-lisp-bindings! (car arg) (.. (sub (car arg) 1 -5) ".lisp"))))
