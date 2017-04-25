@@ -28,7 +28,7 @@
   (set! status-code (or status-code "200 OK"))
   (set! headers (table/merge {"Content-Type" "text/html; charset=utf-8"
                               "Cache-Control" "no-cache"
-                              "Date" (os/date "%a %b  %X %Y")
+                              "Date" (os/date "%a %b  %d %X %Y")
                               "Server" "unnamed"
                               "Content-Length" (#s data)
                               "Connection" "Close"} (or headers {})))
