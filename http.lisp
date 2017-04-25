@@ -1,4 +1,6 @@
 (import lua/io (popen))
+(import lua/os os)
+(import table)
 (import bindings/luasocket (http/request!))
 
 (defun get! (url)
@@ -21,4 +23,23 @@
     (when result
       (when (> (#s result) 0)
         result))))
+
+(defun generate-response (data status-code headers)
+  (set! status-code (or status-code "200 OK"))
+  (set! headers (table/merge {"Content-Type" "text/html; charset=utf-8"
+                              "Cache-Control" "no-cache"
+                              "Date" (os/date "%a %b  %X %Y")
+                              "Server" "unnamed"
+                              "Content-Length" (#s data)
+                              "Connection" "Close"} (or headers {})))
+  (let* [(response '())]
+    (push-cdr! response (.. "HTTP/1.1 " status-code))
+    (for-each header-key (keys headers)
+      (push-cdr! response (.. header-key ": " (.> headers header-key))))
+    (push-cdr! response "")
+    (push-cdr! response data)
+    (concat response "\r\n")))
+
+(defun get-request-path (request)
+  (cadr (string/split request " ")))
 
