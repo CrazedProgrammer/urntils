@@ -29,9 +29,11 @@
                end
            end
        end
-       add('', require('"
+       local err, lib = pcall(require, '"
       library-name
-      "') or {})
+      "')
+       if not err then lib = {} end
+       add('', lib)
        return export"))
 
 (defun write-lua-bindings! (library-name outfile)

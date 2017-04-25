@@ -1,4 +1,5 @@
-local lfs = require("lfs") or {}
+local err, lfs = pcall(require, "lfs")
+if not err then lfs = {} end
 
 return {
 	["attributes!"] = lfs.attributes,

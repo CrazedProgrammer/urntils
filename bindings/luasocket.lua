@@ -1,10 +1,19 @@
-local socket = require("socket") or {dns = {}}
-local socket_http = require("socket.http") or {}
-local socket_ftp = require("socket.ftp") or {}
-local socket_smtp = require("socket.smtp") or {}
-local socket_url = require("socket.url") or {}
-local mime = require("mime") or {}
-local ltn12 = require("ltn12") or {filter = {}, pump = {}, sink = {}, source = {}}
+local function tryRequire(name, fail)
+	local err, lib = pcall(require, name)
+	if err then
+		return lib
+	else
+		return fail or {}
+	end
+end
+
+local socket = tryRequire("socket", {dns = {}})
+local socket_http = tryRequire("socket.http")
+local socket_ftp = tryRequire("socket.ftp")
+local socket_smtp = tryRequire("socket.smtp")
+local socket_url = tryRequire("socket.url")
+local mime = tryRequire("mime")
+local ltn12 = tryRequire("ltn12", {filter = {}, pump = {}, sink = {}, source = {}})
 
 return {
 	["http/request!"] = socket_http.request,
