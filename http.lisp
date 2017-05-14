@@ -21,7 +21,7 @@
                       (self handle :close)
                       data)))]
     (when result
-      (when (> (#s result) 0)
+      (when (> (n result) 0)
         result))))
 
 (defun generate-response (data status-code headers)
@@ -30,7 +30,7 @@
                               "Cache-Control" "no-cache"
                               "Date" (os/date "%a %b  %d %X %Y")
                               "Server" "unnamed"
-                              "Content-Length" (#s data)
+                              "Content-Length" (n data)
                               "Connection" "Close"} (or headers {})))
   (let* [(response '())]
     (push-cdr! response (.. "HTTP/1.1 " status-code))

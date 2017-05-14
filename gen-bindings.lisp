@@ -39,7 +39,7 @@
 (defun write-lua-bindings! (library-name outfile)
   (write-all! outfile (gen-lua-bindings library-name)))
 
-(when (> (# arg) 0)
-  (if (= (# arg) 2)
+(when (> (n arg) 0)
+  (if (= (n arg) 2)
     (write-lua-bindings! (car arg) (cadr arg))
     (write-lisp-bindings! (car arg) (.. (sub (car arg) 1 -5) ".lisp"))))
